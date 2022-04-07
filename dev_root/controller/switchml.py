@@ -316,6 +316,12 @@ class SwitchML(object):
 
                 ports.append((fp_port, fp_lane, speed, fec, an))
 
+        # add manual entries for port looping 
+        ports.append((34, 0, 10, "none", "disable"))
+        ports.append((38, 0, 10, "none", "disable"))
+        ports.append((42, 0, 10, "none", "disable"))
+        ports.append((46, 0, 10, "none", "disable"))
+
         # Add ports
         success, error_msg = self.ports.add_ports(ports)
         if not success:
@@ -323,6 +329,9 @@ class SwitchML(object):
 
         # Add forwarding entries
         self.forwarder.add_entries(fib.items())
+
+        # add manual forwarding rules
+        self.forwarder.add_manual_forw_entry(45, 145)
 
         # Add ports to flood multicast group
         rids_and_ports = [

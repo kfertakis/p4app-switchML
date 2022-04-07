@@ -86,6 +86,22 @@ class Forwarder(Control):
                                  'Ingress.forwarder.set_egress_port')
         ])
         self.mac_addresses[mac_address] = dev_port
+    
+    def add_manual_forw_entry(self, ingress_dev_port, egress_dev_port):
+        ''' Add one entry.
+
+            Keyword arguments:
+                dev_port -- dev port number
+                mac_address -- MAC address reachable through the port
+        '''
+
+        self.table.entry_add(self.target, [
+            self.table.make_key(
+                [self.gc.KeyTuple('ig_intr_md.ingress_port', ingress_dev_port)])
+        ], [
+            self.table.make_data([self.gc.DataTuple('egress_port', egress_dev_port)],
+                                 'Ingress.forwarder.set_egress_port')
+        ])
 
     def add_entries(self, entry_list):
         ''' Add entries.
@@ -96,6 +112,16 @@ class Forwarder(Control):
 
         for (dev_port, mac_address) in entry_list:
             self.add_entry(dev_port, mac_address)
+    
+    def add_manual_forw_entries(self, entry_list):
+        ''' Add entries.
+
+            Keyword arguments:
+                entry_list -- a list of tuples: (ingress_dev_port, egress_dev_port)
+        '''
+
+        for (ingress_dev_port, egress_dev_port) in entry_list:
+            self.add_manual_forw_entry(ingress_dev_port, egress_dev_port)
 
     def remove_entry(self, mac_address):
         ''' Remove one entry '''

@@ -1,5 +1,17 @@
 ports:
-    1/0 : {speed: "100G", fec: "none", autoneg: "disable", mac: "00:11:22:33:44:55"}
-    2/0 : {speed: "100G", fec: "none", autoneg: "disable", mac: "00:11:22:33:44:66"}
-    3/0 : {speed: "100G", fec: "none", autoneg: "disable", mac: "00:11:22:33:44:77"}
-    4/0 : {speed: "100G", fec: "none", autoneg: "disable", mac: "00:11:22:33:44:88"}
+    18/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3
+    20/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:bb"} #quokka2
+    22/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:8b"} #quokka1
+    24/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:4b"} #quokka4
+
+    # port 18 -> d_p 45
+    # port 20 -> d_p 47
+    # port 22 -> d_p 61
+    # port 24 -> d_p 63
+
+    # port 34 -> d_p 145
+    # port 38 -> d_p 137
+    # port 42 -> d_p 129
+    # port 46 -> d_p 133
+
+    # so we would like 45, 63 to be redirected 145 and 145 to be redirected to 45,63 egress

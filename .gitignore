@@ -1,3 +1,5 @@
+dev_root/controller/.vscode
+dev_root/third_party/grpc/
 build
 docs/_build
 docs/client_lib_api

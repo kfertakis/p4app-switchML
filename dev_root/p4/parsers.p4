@@ -89,7 +89,8 @@ parser IngressParser(
 
     state parse_ethernet {
         pkt.extract(hdr.ethernet);
-        transition select(hdr.ethernet.ether_type) {
+        transition select(hdr.ethernet.ether_type, ig_intr_md.ingress_port) {
+            (_,  45) : accept_regular;
             ETHERTYPE_ARP : parse_arp;
             ETHERTYPE_IPV4 : parse_ipv4;
             default : accept_regular;

@@ -50,8 +50,8 @@ control Forwarder(
 
     table forward {
         key = {
-            hdr.ethernet.dst_addr : exact;
-            ig_intr_md.ingress_port : exact;
+            hdr.ethernet.dst_addr : ternary;
+            ig_intr_md.ingress_port : ternary;
         }
         actions = {
             set_egress_port;

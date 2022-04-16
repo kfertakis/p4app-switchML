@@ -317,33 +317,38 @@ class SwitchML(object):
                 ports.append((fp_port, fp_lane, speed, fec, an))
 
         # add manual entries for port looping 
-        ports.append((34, 0, 10, "none", "disable"))
-        ports.append((38, 0, 10, "none", "disable"))
-        ports.append((42, 0, 10, "none", "disable"))
-        ports.append((46, 0, 10, "none", "disable"))
+        temp_port = ports
+        temp_port.append((34, 0, 10, "none", "disable"))
+        temp_port.append((18, 0, 25, "none", "disable"))
+        # temp_port.append((38, 0, 10, "none", "disable"))
+        # temp_port.append((42, 0, 10, "none", "disable"))
+        # temp_port.append((46, 0, 10, "none", "disable"))
 
         # Add ports
-        success, error_msg = self.ports.add_ports(ports)
+        success, error_msg = self.ports.add_ports(temp_port)
         if not success:
             return (False, error_msg)
-
-        # Add forwarding entries
-        self.forwarder.add_entries(fib.items())
 
         # add manual forwarding rules
         self.forwarder.add_manual_forw_entry(45, 145)
 
-        # Add ports to flood multicast group
-        rids_and_ports = [
-            (self.all_ports_initial_rid + dp, dp) for dp in fib.keys()
-        ]
-        success, error_msg = self.pre.add_multicast_nodes(
-            self.all_ports_mgid, rids_and_ports)
-        if not success:
-            return (False, error_msg)
+        # add manual forwarding rules
+        self.forwarder.add_manual_forw_entry(145, 45)
 
-        for r, p in rids_and_ports:
-            self.multicast_groups[self.all_ports_mgid][r] = p
+        # Add forwarding entries
+        self.forwarder.add_entries(fib.items())
+
+        # Add ports to flood multicast group
+        # rids_and_ports = [
+        #     (self.all_ports_initial_rid + dp, dp) for dp in fib.keys()
+        # ]
+        # success, error_msg = self.pre.add_multicast_nodes(
+        #     self.all_ports_mgid, rids_and_ports)
+        # if not success:
+        #     return (False, error_msg)
+
+        # for r, p in rids_and_ports:
+        #     self.multicast_groups[self.all_ports_mgid][r] = p
 
         return (True, ports)
 

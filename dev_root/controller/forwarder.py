@@ -57,7 +57,12 @@ class Forwarder(Control):
         # Add broadcast entry
         self.table.entry_add(self.target, [
             self.table.make_key([
-                self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff')
+                self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+                self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
+                self.gc.KeyTuple(
+                        'ig_intr_md.ingress_port',  # port
+                        0x00,
+                        0x00)
             ])
         ], [
             self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
@@ -79,12 +84,16 @@ class Forwarder(Control):
         '''
 
         self.table.entry_add(self.target, [
-            self.table.make_key(
-                [self.gc.KeyTuple('hdr.ethernet.dst_addr', mac_address)])
+            self.table.make_key([
+                self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+                self.gc.KeyTuple('hdr.ethernet.dst_addr', mac_address, 0xffffffffffff),
+                self.gc.KeyTuple('ig_intr_md.ingress_port', 0x00, 0x00)
+            ])
         ], [
             self.table.make_data([self.gc.DataTuple('egress_port', dev_port)],
                                  'Ingress.forwarder.set_egress_port')
         ])
+        
         self.mac_addresses[mac_address] = dev_port
     
     def add_manual_forw_entry(self, ingress_dev_port, egress_dev_port):
@@ -95,13 +104,35 @@ class Forwarder(Control):
                 mac_address -- MAC address reachable through the port
         '''
 
-        self.table.entry_add(self.target, [
-            self.table.make_key(
-                [self.gc.KeyTuple('ig_intr_md.ingress_port', ingress_dev_port)])
-        ], [
-            self.table.make_data([self.gc.DataTuple('egress_port', egress_dev_port)],
+        # self.table.entry_add(self.target, [
+        #     self.table.make_key([
+        #         self.gc.KeyTuple('hdr.ethernet.dst_addr', "0c:42:a1:81:1b:4b"),
+        #         self.gc.KeyTuple('ig_intr_md.ingress_port', ingress_dev_port)
+        #         ])
+        # ], [
+        #     self.table.make_data([self.gc.DataTuple('egress_port', egress_dev_port)],
+        #                          'Ingress.forwarder.set_egress_port')
+        # ])
+
+        self.table.entry_add(
+            self.target,
+            [
+                self.table.make_key([
+                    self.gc.KeyTuple('$MATCH_PRIORITY', 0),
+                    self.gc.KeyTuple(
+                        'hdr.ethernet.dst_addr',  # 48 bits
+                        0x000000000000,  # dst_addr mac
+                        0x000000000000),
+                    self.gc.KeyTuple(
+                        'ig_intr_md.ingress_port',  # port
+                        ingress_dev_port,
+                        0xff)
+                ])
+            ],
+            [
+               self.table.make_data([self.gc.DataTuple('egress_port', egress_dev_port)],
                                  'Ingress.forwarder.set_egress_port')
-        ])
+            ])
 
     def add_entries(self, entry_list):
         ''' Add entries.

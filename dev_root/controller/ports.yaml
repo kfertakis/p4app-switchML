@@ -1,7 +1,7 @@
 ports:
-    18/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3
-    20/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:bb"} #quokka2
-    22/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:8b"} #quokka1
+    38/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3
+    # 20/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:bb"} #quokka2
+    # 22/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:8b"} #quokka1
     24/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:4b"} #quokka4
 
     # port 18 -> d_p 45
@@ -15,3 +15,6 @@ ports:
     # port 46 -> d_p 133
 
     # so we would like 45, 63 to be redirected 145 and 145 to be redirected to 45,63 egress
+
+# currently quokka03 connected to port 18 
+# but we will instruct switchml as if it was on port 38

@@ -318,8 +318,12 @@ class SwitchML(object):
 
         # add manual entries for port looping 
         temp_port = ports
-        temp_port.append((34, 0, 10, "none", "disable"))
+        # temp_port.append((34, 0, 10, "none", "disable"))
+        temp_port.append((17, 0, 10, "none", "disable"))
         temp_port.append((18, 0, 25, "none", "disable"))
+        temp_port.append((19, 0, 10, "none", "disable"))
+        temp_port.append((23, 0, 10, "none", "disable"))
+        temp_port.append((24, 0, 25, "none", "disable"))
         # temp_port.append((38, 0, 10, "none", "disable"))
         # temp_port.append((42, 0, 10, "none", "disable"))
         # temp_port.append((46, 0, 10, "none", "disable"))
@@ -330,25 +334,32 @@ class SwitchML(object):
             return (False, error_msg)
 
         # add manual forwarding rules
-        self.forwarder.add_manual_forw_entry(45, 145)
+        self.forwarder.add_manual_forw_entry(45, 44)
+        self.forwarder.add_manual_forw_entry(63, 44)
+
+        self.forwarder.add_full_manual_forw_entry(44, "0c:42:a1:81:1b:43", 45)
+        self.forwarder.add_full_manual_forw_entry(44, "0c:42:a1:81:1b:4b", 63)
 
         # add manual forwarding rules
-        self.forwarder.add_manual_forw_entry(145, 45)
+        self.forwarder.add_manual_forw_entry(46, 62)
+        self.forwarder.add_manual_forw_entry(62, 46)
 
         # Add forwarding entries
         self.forwarder.add_entries(fib.items())
 
-        # Add ports to flood multicast group
-        # rids_and_ports = [
-        #     (self.all_ports_initial_rid + dp, dp) for dp in fib.keys()
-        # ]
-        # success, error_msg = self.pre.add_multicast_nodes(
-        #     self.all_ports_mgid, rids_and_ports)
-        # if not success:
-        #     return (False, error_msg)
+        self.forwarder.add_entry(60, "0c:42:a1:81:1b:43")
 
-        # for r, p in rids_and_ports:
-        #     self.multicast_groups[self.all_ports_mgid][r] = p
+        # Add ports to flood multicast group
+        rids_and_ports = [
+            (self.all_ports_initial_rid + dp, dp) for dp in fib.keys()
+        ]
+        success, error_msg = self.pre.add_multicast_nodes(
+            self.all_ports_mgid, rids_and_ports)
+        if not success:
+            return (False, error_msg)
+
+        for r, p in rids_and_ports:
+            self.multicast_groups[self.all_ports_mgid][r] = p
 
         return (True, ports)
 

@@ -1,8 +1,9 @@
 ports:
     # 38/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3
-    # 19/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3
+    19/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3
+    # 19/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "b8:ce:f6:d0:08:85"} #quokka1
     # 18/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3
-    20/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:bb"} #quokka2
+    # 20/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:bb"} #quokka2
     # 22/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:8b"} #quokka1
     # 24/0 : {speed: "25G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:4b"} #quokka4
     # 21/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3

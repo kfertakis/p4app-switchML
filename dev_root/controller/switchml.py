@@ -321,7 +321,7 @@ class SwitchML(object):
         # temp_port.append((34, 0, 10, "none", "disable"))
         temp_port.append((17, 0, 10, "none", "disable"))
         temp_port.append((18, 0, 25, "none", "disable"))
-        temp_port.append((19, 0, 10, "none", "disable"))
+        temp_port.append((22, 0, 25, "none", "disable"))
         temp_port.append((23, 0, 10, "none", "disable"))
         temp_port.append((24, 0, 25, "none", "disable"))
         # temp_port.append((38, 0, 10, "none", "disable"))
@@ -335,23 +335,33 @@ class SwitchML(object):
 
         # add manual forwarding rules
         self.forwarder.add_manual_forw_entry(45, 44)
-        self.forwarder.add_manual_forw_entry(63, 44)
+        self.forwarder.add_manual_forw_entry(61, 44)
+        self.forwarder.add_manual_forw_entry(63, 62)
 
-        self.forwarder.add_full_manual_forw_entry(44, "0c:42:a1:81:1b:43", 45)
-        self.forwarder.add_full_manual_forw_entry(44, "0c:42:a1:81:1b:4b", 63)
+        self.forwarder.add_full_manual_forw_entry(44, "0C:42:A1:81:1B:43", 45)
+        self.forwarder.add_full_manual_forw_entry(44, "B8:CE:F6:D0:08:85", 61)
+        self.forwarder.add_full_manual_forw_entry(62, "0C:42:A1:81:1B:4B", 63)
 
         # add manual forwarding rules
-        self.forwarder.add_manual_forw_entry(46, 62)
-        self.forwarder.add_manual_forw_entry(62, 46)
+        # self.forwarder.add_manual_forw_entry(44, 45)
+        # self.forwarder.add_manual_forw_entry(62, 63)
 
         # Add forwarding entries
-        self.forwarder.add_entries(fib.items())
+        # here we also let the controller know under which ports to finds the end hosts
+        self.forwarder.add_entry(46, "0C:42:A1:81:1B:43")
+        self.forwarder.add_entry(46, "B8:CE:F6:D0:08:85")
+        self.forwarder.add_entry(60, "0C:42:A1:81:1B:4B")
+        # self.forwarder.add_entries(fib.items())
 
-        self.forwarder.add_entry(60, "0c:42:a1:81:1b:43")
+        # self.forwarder.add_entry(60, "0c:42:a1:81:1b:43")
 
         # Add ports to flood multicast group
+        # rids_and_ports = [
+        #     (self.all_ports_initial_rid + dp, dp) for dp in fib.keys()
+        # ]
+
         rids_and_ports = [
-            (self.all_ports_initial_rid + dp, dp) for dp in fib.keys()
+            (self.all_ports_initial_rid + dp, dp) for dp in [45, 61, 63]
         ]
         success, error_msg = self.pre.add_multicast_nodes(
             self.all_ports_mgid, rids_and_ports)

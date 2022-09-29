@@ -39,6 +39,7 @@ class Forwarder(Control):
 
         # Clear table and add defaults
         self._clear()
+
         # self.add_default_entries()
         self.add_default_entries_modified()
 
@@ -93,7 +94,7 @@ class Forwarder(Control):
             self.table.make_key([
                 self.gc.KeyTuple('$MATCH_PRIORITY', 1),
                 self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
-                self.gc.KeyTuple('ig_intr_md.ingress_port',  0x2F, 0xff)
+                self.gc.KeyTuple('ig_intr_md.ingress_port',  0x2E, 0xff)
             ])
         ], [
             self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
@@ -134,16 +135,6 @@ class Forwarder(Control):
                 dev_port -- dev port number
                 mac_address -- MAC address reachable through the port
         '''
-
-        # self.table.entry_add(self.target, [
-        #     self.table.make_key([
-        #         self.gc.KeyTuple('hdr.ethernet.dst_addr', "0c:42:a1:81:1b:4b"),
-        #         self.gc.KeyTuple('ig_intr_md.ingress_port', ingress_dev_port)
-        #         ])
-        # ], [
-        #     self.table.make_data([self.gc.DataTuple('egress_port', egress_dev_port)],
-        #                          'Ingress.forwarder.set_egress_port')
-        # ])
 
         self.table.entry_add(
             self.target,

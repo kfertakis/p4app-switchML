@@ -36,7 +36,7 @@ class Forwarder(Control):
         # Annotations
         self.table.info.key_field_annotation_add('hdr.ethernet.dst_addr', 'mac')
 
-        # Multicast group ID for floodss
+        # Multicast group ID for flood
         self.mgid = mgid
 
         # Keep set of mac addresses so we can delete them all without deleting the flood rule

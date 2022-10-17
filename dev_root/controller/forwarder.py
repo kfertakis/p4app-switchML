@@ -19,19 +19,24 @@ from control import Control
 
 class Forwarder(Control):
 
-    def __init__(self, target, gc, bfrt_info, mgid):
+    def __init__(self, target, portMaps, gc, bfrt_info, mgid):
         # Set up base class
         super(Forwarder, self).__init__(target, gc)
 
         self.log = logging.getLogger(__name__)
 
+        self.portMaps = portMaps
+
         self.tables = [bfrt_info.table_get('pipe.Ingress.forwarder.forward')]
         self.table = self.tables[0]
+
+        self.port_meta_tables = [bfrt_info.table_get('pipe.IngressParser.$PORT_METADATA')]
+        self.port_meta_table = self.port_meta_tables[0]
 
         # Annotations
         self.table.info.key_field_annotation_add('hdr.ethernet.dst_addr', 'mac')
 
-        # Multicast group ID for flood
+        # Multicast group ID for floodss
         self.mgid = mgid
 
         # Keep set of mac addresses so we can delete them all without deleting the flood rule
@@ -42,6 +47,9 @@ class Forwarder(Control):
 
         # self.add_default_entries()
         self.add_default_entries_modified()
+
+        # add port metadata for skipping processing
+        self.add_process_type_meta_per_port()
 
     def _clear(self):
         ''' Remove all entries (except broadcast) '''
@@ -76,25 +84,113 @@ class Forwarder(Control):
     
     def add_default_entries_modified(self):
         ''' Add broadcast and default entries '''
+        #top aggr
+        # Add broadcast entry
+        # self.table.entry_add(self.target, [
+        #     self.table.make_key([
+        #         self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+        #         self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
+        #         self.gc.KeyTuple('ig_intr_md.ingress_port',  0x2E, 0xff)
+        #     ])
+        # ], [
+        #     self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
+        #                          'Ingress.forwarder.flood')
+        # ])
+
+        # # Add broadcast entry
+        # self.table.entry_add(self.target, [
+        #     self.table.make_key([
+        #         self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+        #         self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
+        #         self.gc.KeyTuple('ig_intr_md.ingress_port',  0x3C, 0xff)
+        #     ])
+        # ], [
+        #     self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
+        #                          'Ingress.forwarder.flood')
+        # ])
+
+        #left aggr
+
+        # Add broadcast entry
+        # self.table.entry_add(self.target, [
+        #     self.table.make_key([
+        #         self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+        #         self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
+        #         self.gc.KeyTuple('ig_intr_md.ingress_port',  0x1E, 0xff)
+        #     ])
+        # ], [
+        #     self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
+        #                          'Ingress.forwarder.flood')
+        # ])
+
+        # # # Add broadcast entry
+        # self.table.entry_add(self.target, [
+        #     self.table.make_key([
+        #         self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+        #         self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
+        #         self.gc.KeyTuple('ig_intr_md.ingress_port',  0x2C, 0xff)
+        #     ])
+        # ], [
+        #     self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
+        #                          'Ingress.forwarder.flood')
+        # ])
+
+        # #         # Add broadcast entry
+        # self.table.entry_add(self.target, [
+        #     self.table.make_key([
+        #         self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+        #         self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
+        #         self.gc.KeyTuple('ig_intr_md.ingress_port',  0x2D, 0xff)
+        #     ])
+        # ], [
+        #     self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
+        #                          'Ingress.forwarder.flood')
+        # ])
+
+        # #         # Add broadcast entry
+        # self.table.entry_add(self.target, [
+        #     self.table.make_key([
+        #         self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+        #         self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
+        #         self.gc.KeyTuple('ig_intr_md.ingress_port',  0x3D, 0xff)
+        #     ])
+        # ], [
+        #     self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
+        #                          'Ingress.forwarder.flood')
+        # ])
+
+        #right aggr
 
         # Add broadcast entry
         self.table.entry_add(self.target, [
             self.table.make_key([
                 self.gc.KeyTuple('$MATCH_PRIORITY', 1),
                 self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
-                self.gc.KeyTuple('ig_intr_md.ingress_port',  0x3C, 0xff)
+                self.gc.KeyTuple('ig_intr_md.ingress_port',  0x3F, 0xff)
             ])
         ], [
             self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
                                  'Ingress.forwarder.flood')
         ])
 
-        # Add broadcast entry
+                # Add broadcast entry
         self.table.entry_add(self.target, [
             self.table.make_key([
                 self.gc.KeyTuple('$MATCH_PRIORITY', 1),
                 self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
-                self.gc.KeyTuple('ig_intr_md.ingress_port',  0x2E, 0xff)
+                self.gc.KeyTuple('ig_intr_md.ingress_port',  0x2F, 0xff)
+            ])
+        ], [
+            self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
+                                 'Ingress.forwarder.flood')
+        ])
+
+                # Add broadcast entry
+        self.table.entry_add(self.target, [
+            self.table.make_key([
+                self.gc.KeyTuple('$MATCH_PRIORITY', 1),
+                self.gc.KeyTuple('hdr.ethernet.dst_addr', 'ff:ff:ff:ff:ff:ff', 0xffffffffffff),
+                self.gc.KeyTuple('ig_intr_md.ingress_port',  0x3E, 0xff)
             ])
         ], [
             self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
@@ -106,6 +202,36 @@ class Forwarder(Control):
             self.target,
             self.table.make_data([self.gc.DataTuple('flood_mgid', self.mgid)],
                                  'Ingress.forwarder.flood'))
+    
+    def add_process_type_meta_per_port(self):
+
+        for port in range(29,64):
+            self.port_meta_table.entry_add(
+            self.target,
+            [self.port_meta_table.make_key([self.gc.KeyTuple('ig_intr_md.ingress_port', port)])],
+            [self.port_meta_table.make_data([self.gc.DataTuple('processing_type', 1)])])
+
+        # left aggr
+        # for port in [19, 21, 23, 24]:
+        # right aggr
+        for fp_port in [17, 18, 19, 21, 22]:
+            self.port_meta_table.entry_add(
+            self.target,
+            [self.port_meta_table.make_key([self.gc.KeyTuple('ig_intr_md.ingress_port', self.portMaps[fp_port])])],
+            [self.port_meta_table.make_data([self.gc.DataTuple('processing_type', 0)])])
+
+        # self.port_meta_table.entry_add(self.target, [
+        #     self.port_meta_table.make_key([self.gc.KeyTuple('ig_intr_md.ingress_port', p)])
+        #     for p in [46, 60, 62, 63]
+        # ], [
+        #     self.port_meta_table.make_data([
+        #         self.gc.DataTuple('ingress_drop_probability',
+        #                               0),
+        #         self.gc.DataTuple('egress_drop_probability',
+        #                               0),
+        #         self.gc.DataTuple('processing_type', 0x00)
+        #     ])
+        # ] * 4)
 
     def add_entry(self, dev_port, mac_address):
         ''' Add one entry.

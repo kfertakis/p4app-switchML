@@ -87,12 +87,27 @@ parser IngressParser(
         transition accept;
     }
 
+    // state parse_ethernet {
+    //     pkt.extract(hdr.ethernet);
+    //     transition select(hdr.ethernet.ether_type, ig_intr_md.ingress_port) {
+
+    //         (_,  44) : accept_regular;
+    //         (_,  45) : accept_regular;
+    //         (_,  61) : accept_regular;
+    //         // (_,  46) : accept_regular;
+    //         // (_,  60) : accept_regular;
+    //         (_,  62) : accept_regular;
+    //         (_,  63) : accept_regular;
+    //         (ETHERTYPE_ARP, _) : parse_arp;
+    //         (ETHERTYPE_IPV4, _) : parse_ipv4;
+    //         default : accept_regular;
+    //     }
+    // }
+
     state parse_ethernet {
         pkt.extract(hdr.ethernet);
-        transition select(hdr.ethernet.ether_type, ig_intr_md.ingress_port) {
-            (_,  45) : accept_regular;
-            (_,  61) : accept_regular;
-            (_,  63) : accept_regular;
+        transition select(hdr.ethernet.ether_type, ig_md.port_metadata.processing_type) {
+            (_,  processing_type_t.SKIP) : accept_regular;
             (ETHERTYPE_ARP, _) : parse_arp;
             (ETHERTYPE_IPV4, _) : parse_ipv4;
             default : accept_regular;

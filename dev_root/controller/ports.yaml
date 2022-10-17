@@ -9,6 +9,8 @@ ports:
     # 21/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:43"} #quokka3
     21/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:4b"} #quokka4
 
+    # port 15 -> d_p 30
+    # port 16 -> d_p 31
     # port 17 -> d_p 44
     # port 18 -> d_p 45
     # port 19 -> d_p 46

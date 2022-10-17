@@ -135,6 +135,13 @@ enum bit<3> packet_size_t {
 // Drop probability between 0 and 32767
 typedef bit<16> drop_probability_t;
 
+// Processing type
+enum bit<2> processing_type_t {
+    SKIP = 0,
+    PROCESS = 1,
+    RECIRCULATE = 2
+}
+
 // Type for counters
 typedef bit<32> counter_t;
 
@@ -162,6 +169,7 @@ enum bit<4> packet_type_t {
 struct port_metadata_t {
     drop_probability_t ingress_drop_probability;
     drop_probability_t egress_drop_probability;
+    processing_type_t processing_type;
 }
 
 // SwitchML metadata header, bridged for recirculation and not exposed outside the switch

@@ -25,6 +25,9 @@ from concurrent import futures
 # Add BF Python to search path
 bfrt_location = '{}/lib/python*/site-packages/tofino'.format(
     os.environ['SDE_INSTALL'])
+
+placements_file_location='placements.yaml'
+
 sys.path.append(glob.glob(bfrt_location)[0])
 import bfrt_grpc.client as gc
 
@@ -90,7 +93,14 @@ class SwitchML(object):
               bfrt_ip,
               bfrt_port,
               ports_file,
+              placements_file='placements.yaml',
               folded_pipe=False):
+
+         # INCAS custom implementation
+        success, params, placements = self.load_placements_file(placements_file)
+        if not success:
+            self.critical_error(params)
+        print(params, placements)
 
         # Device 0
         self.dev = 0
@@ -216,6 +226,12 @@ class SwitchML(object):
             # Add multicast group for flood
             self.pre.add_multicast_group(self.all_ports_mgid)
 
+            # INCAS custom implementation
+            success, params, placements = self.load_placements_file(placements_file)
+            if not success:
+                self.critical_error(params)
+            print(params, placements)
+
             # Enable ports
             success, ports = self.load_ports_file(ports_file)
             if not success:
@@ -244,6 +260,22 @@ class SwitchML(object):
         except Exception as e:
             self.log.exception(e)
             self.critical_error('Unexpected error. Stopping controller.')
+
+    def load_placements_file(self, placements_file: str):
+        placements = {}
+        params = {}
+
+        with open(placements_file) as f:
+            yaml_placemenets = yaml.safe_load(f)
+
+            for param, value in yaml_placemenets['params'].items():
+                params[param] = value
+
+            for task, node in yaml_placemenets['placements'].items():
+                placements[task] = node
+            
+        
+        return (True, params, placements)
 
     def load_ports_file(self, ports_file):
         ''' Load ports yaml file and enable front panel ports.
@@ -722,6 +754,7 @@ if __name__ == '__main__':
                            type=str,
                            default='SwitchML',
                            help='P4 program name. Default: SwitchML')
+    
     argparser.add_argument(
         '--bfrt-ip',
         type=str,
@@ -783,7 +816,7 @@ if __name__ == '__main__':
 
     ctrl = SwitchML()
     ctrl.setup(args.program, args.switch_mac, args.switch_ip, args.bfrt_ip,
-               args.bfrt_port, args.ports, args.enable_folded_pipe)
+               args.bfrt_port, args.ports, placements_file_location, args.enable_folded_pipe)
 
     # Start controller
     ctrl.run()

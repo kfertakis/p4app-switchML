@@ -49,6 +49,14 @@ from grpc_server import GRPCServer
 from cli import Cli
 from common import front_panel_regex, mac_address_regex, validate_ip
 
+from dataclasses import dataclass, field
+
+@dataclass
+class nodeInfo:
+    id: int = 0 
+    port: int = 0
+    mac: str = ""
+    name: str = ""
 
 class SwitchML(object):
     '''SwitchML controller'''
@@ -79,6 +87,16 @@ class SwitchML(object):
         # front port to dev port mapping
         self.portMaps = dict({15: 30, 16: 31, 17:44, 18:45, 19:46, 20:47, 21:60, 22:61, 23:62, 24:63})
 
+        # server node map
+        self.nodeMap = dict({
+            0: nodeInfo(0, 15, "B8:CE:F6:D0:08:84", "quokka1.0"),
+            1: nodeInfo(1, 18, "0C:42:A1:81:1B:43", "quokka3.1"),
+            2: nodeInfo(2, 22, "B8:CE:F6:D0:08:85", "quokka1.1"),
+            3: nodeInfo(3, 20, "0C:42:A1:81:1B:BB", "quokka2.1"),
+            4: nodeInfo(4, 16, "0C:42:A1:81:1B:BA", "quokka2.0"),
+            5: nodeInfo(5, 24, "0C:42:A1:81:1B:4B", "quokka4.1"),
+        })
+
     def critical_error(self, msg):
         self.log.critical(msg)
         print(msg, file=sys.stderr)
@@ -93,14 +111,14 @@ class SwitchML(object):
               bfrt_ip,
               bfrt_port,
               ports_file,
-              placements_file='placements.yaml',
+              incPlacement,
               folded_pipe=False):
 
          # INCAS custom implementation
-        success, params, placements = self.load_placements_file(placements_file)
-        if not success:
-            self.critical_error(params)
-        print(params, placements)
+        # success, params, placements = self.load_placements_file(placements_file)
+        # if not success:
+        #     self.critical_error(params)
+        # print(params, placements)
 
         # Device 0
         self.dev = 0
@@ -191,7 +209,7 @@ class SwitchML(object):
 
             # Setup tables
             # Forwarder
-            self.forwarder = Forwarder(self.target, self.portMaps, gc, self.bfrt_info,
+            self.forwarder = Forwarder(self.target, self.portMaps, incPlacement, gc, self.bfrt_info,
                                        self.all_ports_mgid)
             # ARP and ICMP responder
             self.arp_and_icmp = ARPandICMPResponder(self.target, gc,
@@ -226,16 +244,15 @@ class SwitchML(object):
             # Add multicast group for flood
             self.pre.add_multicast_group(self.all_ports_mgid)
 
-            # INCAS custom implementation
-            success, params, placements = self.load_placements_file(placements_file)
-            if not success:
-                self.critical_error(params)
-            print(params, placements)
-
             # Enable ports
             success, ports = self.load_ports_file(ports_file)
             if not success:
                 self.critical_error(ports)
+
+            # Set custom forwarding rules
+            success, msg = self.set_custom_forward_rules(incPlacement)
+            if not success:
+                self.critical_error(msg)
 
             # Set switch addresses
             self.set_switch_mac_and_ip(switch_mac, switch_ip)
@@ -276,6 +293,137 @@ class SwitchML(object):
             
         
         return (True, params, placements)
+    
+    def set_custom_forward_rules(self, incPlacement):
+        # add manual forwarding rules
+
+        if incPlacement == 6:
+            #left aggr
+
+            for nodeIdx in range(3,6):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[node.port])
+                self.forwarder.add_entry(self.portMaps[17], node.mac)
+            
+            self.forwarder.add_manual_forw_entry(self.portMaps[19],self.portMaps[21])
+            self.forwarder.add_manual_forw_entry(self.portMaps[21],self.portMaps[19])
+
+            for nodeIdx in range(0,3):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+
+        elif incPlacement == 7:
+            #right aggr
+
+            for nodeIdx in range(0,3):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
+                self.forwarder.add_entry(self.portMaps[23], node.mac)
+            
+            self.forwarder.add_manual_forw_entry(self.portMaps[19],self.portMaps[21])
+            self.forwarder.add_manual_forw_entry(self.portMaps[21],self.portMaps[19])
+
+            for nodeIdx in range(3,6):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+
+        elif incPlacement == 8:
+            #top aggr
+
+            for nodeIdx in range(0,3):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
+                self.forwarder.add_entry(self.portMaps[19], node.mac)
+            
+
+            for nodeIdx in range(3,6):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[node.port])
+                self.forwarder.add_entry(self.portMaps[21], node.mac)
+
+        else:
+            return (False, 'Unknown INC placement')
+        
+        return (True, '')
+
+        #bypass1718222324/top aggr
+        # self.forwarder.add_manual_forw_entry(self.portMaps[24], self.portMaps[23])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[20], self.portMaps[23])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[18], self.portMaps[17])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[22], self.portMaps[17])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[15], self.portMaps[17])
+
+        #bypass19212324/left aggr
+        # self.forwarder.add_manual_forw_entry(self.portMaps[24], self.portMaps[23])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[20], self.portMaps[23])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[21], self.portMaps[19])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[19], self.portMaps[21])
+
+        #bypass 1718192122/right aggr
+        # self.forwarder.add_manual_forw_entry(self.portMaps[22],self.portMaps[17])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[18],self.portMaps[17])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[15],self.portMaps[17])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[19],self.portMaps[21])
+        # self.forwarder.add_manual_forw_entry(self.portMaps[21],self.portMaps[19])
+
+        # bypass 1718222324
+        # self.forwarder.add_full_manual_forw_entry(44, "0C:42:A1:81:1B:43", 45)
+        # self.forwarder.add_full_manual_forw_entry(44, "B8:CE:F6:D0:08:85", 61)
+        # self.forwarder.add_full_manual_forw_entry(44, "B8:CE:F6:D0:08:84", 30) #quokka01
+
+        # self.forwarder.add_full_manual_forw_entry(62, "0C:42:A1:81:1B:4B", 63)
+        # self.forwarder.add_full_manual_forw_entry(62, "0C:42:A1:81:1B:BB", 47)
+        # self.forwarder.add_full_manual_forw_entry(62, "0C:42:A1:81:1B:BA", 31) #quokka02
+
+        #bypass1718222324/top aggr
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[23], "0C:42:A1:81:1B:4B", self.portMaps[24])
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[23], "0C:42:A1:81:1B:BB", self.portMaps[20])
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "B8:CE:F6:D0:08:85", self.portMaps[22])
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "0C:42:A1:81:1B:43", self.portMaps[18])
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "B8:CE:F6:D0:08:84", self.portMaps[15])
+
+        #bypass 19212324/left aggr
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[23], "0C:42:A1:81:1B:4B", self.portMaps[24])
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[23], "0C:42:A1:81:1B:BB", self.portMaps[20])
+
+        # bypass 1718192122/ right aggr
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "B8:CE:F6:D0:08:85", self.portMaps[22])
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "0C:42:A1:81:1B:43", self.portMaps[18])
+        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "B8:CE:F6:D0:08:84", self.portMaps[15])
+        
+
+        # Add forwarding entries
+        # here we also let the controller know under which ports to finds the end hosts
+        # bypass182224
+        # self.forwarder.add_entry(46, "0C:42:A1:81:1B:43")
+        # self.forwarder.add_entry(46, "B8:CE:F6:D0:08:85")
+        # self.forwarder.add_entry(60, "0C:42:A1:81:1B:4B")
+        # self.forwarder.add_entry(60, "0C:42:A1:81:1B:BB")
+
+        # bypass1718222324/top aggr
+        # self.forwarder.add_entry(self.portMaps[19], "0C:42:A1:81:1B:43")
+        # self.forwarder.add_entry(self.portMaps[19], "B8:CE:F6:D0:08:85")
+        # self.forwarder.add_entry(self.portMaps[21], "0C:42:A1:81:1B:4B")
+        # self.forwarder.add_entry(self.portMaps[19], "B8:CE:F6:D0:08:84")
+        # self.forwarder.add_entry(self.portMaps[21], "0C:42:A1:81:1B:BB")
+
+        # bypasss19212324/left aggr
+        # self.forwarder.add_entry(self.portMaps[18], "0C:42:A1:81:1B:43")
+        # self.forwarder.add_entry(self.portMaps[22], "B8:CE:F6:D0:08:85")
+        # self.forwarder.add_entry(self.portMaps[17], "0C:42:A1:81:1B:4B")
+        # self.forwarder.add_entry(self.portMaps[15], "B8:CE:F6:D0:08:84")
+        # self.forwarder.add_entry(self.portMaps[17], "0C:42:A1:81:1B:BB")
+
+        #bypass 1718192122/ right aggr
+        # self.forwarder.add_entry(self.portMaps[23], "0C:42:A1:81:1B:43")
+        # self.forwarder.add_entry(self.portMaps[23], "B8:CE:F6:D0:08:85")
+        # self.forwarder.add_entry(self.portMaps[24], "0C:42:A1:81:1B:4B")
+        # self.forwarder.add_entry(self.portMaps[23], "B8:CE:F6:D0:08:84")
+        # self.forwarder.add_entry(self.portMaps[20], "0C:42:A1:81:1B:BB")
 
     def load_ports_file(self, ports_file):
         ''' Load ports yaml file and enable front panel ports.
@@ -352,112 +500,27 @@ class SwitchML(object):
                 ports.append((fp_port, fp_lane, speed, fec, an))
 
         # add manual entries for port looping 
-        temp_port = ports
+        # temp_port = ports
         # temp_port.append((34, 0, 10, "none", "disable"))
-        temp_port.append((17, 0, 10, "none", "disable"))
-        temp_port.append((18, 0, 10, "none", "disable"))
-        temp_port.append((22, 0, 10, "none", "disable"))
-        temp_port.append((23, 0, 10, "none", "disable"))
-        temp_port.append((24, 0, 10, "none", "disable"))
-        temp_port.append((20, 0, 10, "none", "disable"))
-        temp_port.append((15, 0, 25, "rs", "disable"))
+        # temp_port.append((17, 0, 10, "none", "disable"))
+        # temp_port.append((18, 0, 10, "none", "disable"))
+        # temp_port.append((22, 0, 10, "none", "disable"))
+        # temp_port.append((23, 0, 10, "none", "disable"))
+        # temp_port.append((24, 0, 10, "none", "disable"))
+        # temp_port.append((20, 0, 10, "none", "disable"))
+        # temp_port.append((15, 0, 25, "rs", "disable"))
         # temp_port.append((16, 0, 25, "rs", "disable"))
         # temp_port.append((38, 0, 10, "none", "disable"))
         # temp_port.append((42, 0, 10, "none", "disable"))
         # temp_port.append((46, 0, 10, "none", "disable"))
 
         # Add ports
-        success, error_msg = self.ports.add_ports(temp_port)
+        success, error_msg = self.ports.add_ports(ports)
         if not success:
             return (False, error_msg)
 
-        # add manual forwarding rules
-
-        #bypass1718222324/top aggr
-        # self.forwarder.add_manual_forw_entry(self.portMaps[24], self.portMaps[23])
-        # self.forwarder.add_manual_forw_entry(self.portMaps[20], self.portMaps[23])
-        # self.forwarder.add_manual_forw_entry(self.portMaps[18], self.portMaps[17])
-        # self.forwarder.add_manual_forw_entry(self.portMaps[22], self.portMaps[17])
-        # self.forwarder.add_manual_forw_entry(self.portMaps[15], self.portMaps[17])
-
-        #bypass19212324/left aggr
-        # self.forwarder.add_manual_forw_entry(self.portMaps[24], self.portMaps[23])
-        # self.forwarder.add_manual_forw_entry(self.portMaps[20], self.portMaps[23])
-        # self.forwarder.add_manual_forw_entry(self.portMaps[21], self.portMaps[19])
-        # self.forwarder.add_manual_forw_entry(self.portMaps[19], self.portMaps[21])
-
-        #bypass 1718192122/right aggr
-        self.forwarder.add_manual_forw_entry(self.portMaps[22],self.portMaps[17])
-        self.forwarder.add_manual_forw_entry(self.portMaps[18],self.portMaps[17])
-        self.forwarder.add_manual_forw_entry(self.portMaps[15],self.portMaps[17])
-        self.forwarder.add_manual_forw_entry(self.portMaps[19],self.portMaps[21])
-        self.forwarder.add_manual_forw_entry(self.portMaps[21],self.portMaps[19])
-
-        # bypass 1718222324
-        # self.forwarder.add_full_manual_forw_entry(44, "0C:42:A1:81:1B:43", 45)
-        # self.forwarder.add_full_manual_forw_entry(44, "B8:CE:F6:D0:08:85", 61)
-        # self.forwarder.add_full_manual_forw_entry(44, "B8:CE:F6:D0:08:84", 30) #quokka01
-
-        # self.forwarder.add_full_manual_forw_entry(62, "0C:42:A1:81:1B:4B", 63)
-        # self.forwarder.add_full_manual_forw_entry(62, "0C:42:A1:81:1B:BB", 47)
-        # self.forwarder.add_full_manual_forw_entry(62, "0C:42:A1:81:1B:BA", 31) #quokka02
-
-        #bypass1718222324/top aggr
-        # self.forwarder.add_full_manual_forw_entry(self.portMaps[23], "0C:42:A1:81:1B:4B", self.portMaps[24])
-        # self.forwarder.add_full_manual_forw_entry(self.portMaps[23], "0C:42:A1:81:1B:BB", self.portMaps[20])
-        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "B8:CE:F6:D0:08:85", self.portMaps[22])
-        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "0C:42:A1:81:1B:43", self.portMaps[18])
-        # self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "B8:CE:F6:D0:08:84", self.portMaps[15])
-
-        #bypass 19212324/left aggr
-        # self.forwarder.add_full_manual_forw_entry(self.portMaps[23], "0C:42:A1:81:1B:4B", self.portMaps[24])
-        # self.forwarder.add_full_manual_forw_entry(self.portMaps[23], "0C:42:A1:81:1B:BB", self.portMaps[20])
-
-        # bypass 1718192122/ right aggr
-        self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "B8:CE:F6:D0:08:85", self.portMaps[22])
-        self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "0C:42:A1:81:1B:43", self.portMaps[18])
-        self.forwarder.add_full_manual_forw_entry(self.portMaps[17], "B8:CE:F6:D0:08:84", self.portMaps[15])
         
-
-        # Add forwarding entries
-        # here we also let the controller know under which ports to finds the end hosts
-        # bypass182224
-        # self.forwarder.add_entry(46, "0C:42:A1:81:1B:43")
-        # self.forwarder.add_entry(46, "B8:CE:F6:D0:08:85")
-        # self.forwarder.add_entry(60, "0C:42:A1:81:1B:4B")
-        # self.forwarder.add_entry(60, "0C:42:A1:81:1B:BB")
-
-        # bypass1718222324/top aggr
-        # self.forwarder.add_entry(self.portMaps[19], "0C:42:A1:81:1B:43")
-        # self.forwarder.add_entry(self.portMaps[19], "B8:CE:F6:D0:08:85")
-        # self.forwarder.add_entry(self.portMaps[21], "0C:42:A1:81:1B:4B")
-        # self.forwarder.add_entry(self.portMaps[19], "B8:CE:F6:D0:08:84")
-        # self.forwarder.add_entry(self.portMaps[21], "0C:42:A1:81:1B:BB")
-
-        # bypasss19212324/left aggr
-        # self.forwarder.add_entry(self.portMaps[18], "0C:42:A1:81:1B:43")
-        # self.forwarder.add_entry(self.portMaps[22], "B8:CE:F6:D0:08:85")
-        # self.forwarder.add_entry(self.portMaps[17], "0C:42:A1:81:1B:4B")
-        # self.forwarder.add_entry(self.portMaps[15], "B8:CE:F6:D0:08:84")
-        # self.forwarder.add_entry(self.portMaps[17], "0C:42:A1:81:1B:BB")
-
-        #bypass 1718192122/ right aggr
-        self.forwarder.add_entry(self.portMaps[23], "0C:42:A1:81:1B:43")
-        self.forwarder.add_entry(self.portMaps[23], "B8:CE:F6:D0:08:85")
-        self.forwarder.add_entry(self.portMaps[24], "0C:42:A1:81:1B:4B")
-        self.forwarder.add_entry(self.portMaps[23], "B8:CE:F6:D0:08:84")
-        self.forwarder.add_entry(self.portMaps[20], "0C:42:A1:81:1B:BB")
-        
-
-        #background nodes 
-        # bypass 1718222324
-        # self.forwarder.add_entry(46, "B8:CE:F6:D0:08:84")
-        # self.forwarder.add_entry(60, "0C:42:A1:81:1B:BA")
-
-
         # self.forwarder.add_entries(fib.items())
-
-        # self.forwarder.add_entry(60, "0c:42:a1:81:1b:43")
 
         # Add ports to flood multicast group
         # rids_and_ports = [
@@ -465,7 +528,7 @@ class SwitchML(object):
         # ]
 
         rids_and_ports = [
-            (self.all_ports_initial_rid + dp, dp) for dp in [self.portMaps[15], self.portMaps[18], self.portMaps[20], self.portMaps[22], self.portMaps[24]]
+            (self.all_ports_initial_rid + dp, dp) for dp in [self.portMaps[15], self.portMaps[16], self.portMaps[18], self.portMaps[20], self.portMaps[22], self.portMaps[24]]
         ]
         success, error_msg = self.pre.add_multicast_nodes(
             self.all_ports_mgid, rids_and_ports)
@@ -754,6 +817,11 @@ if __name__ == '__main__':
                            type=str,
                            default='SwitchML',
                            help='P4 program name. Default: SwitchML')
+    argparser.add_argument(
+        '--inc-placement',
+        type=int,
+        default=7,
+        help='INC placement. range[7,8]')
     
     argparser.add_argument(
         '--bfrt-ip',
@@ -816,7 +884,7 @@ if __name__ == '__main__':
 
     ctrl = SwitchML()
     ctrl.setup(args.program, args.switch_mac, args.switch_ip, args.bfrt_ip,
-               args.bfrt_port, args.ports, placements_file_location, args.enable_folded_pipe)
+               args.bfrt_port, args.ports, args.inc_placement, args.enable_folded_pipe)
 
     # Start controller
     ctrl.run()

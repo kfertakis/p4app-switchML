@@ -159,7 +159,7 @@ ibv_mr* RdmaEndpoint::AllocateAtAddress(void* requested_address, size_t size) {
     // Allocate
     void* buf =
         mmap(requested_address, size, PROT_READ | PROT_WRITE,
-             MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_FIXED, -1, 0);
+             MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
     PCHECK(buf != MAP_FAILED && buf == requested_address)
         << "Error allocating memory region";
 

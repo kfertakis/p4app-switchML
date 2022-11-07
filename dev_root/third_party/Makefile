@@ -62,7 +62,7 @@ ifeq ($(MLX4),1)
 endif
 endif
 	$(MAKE) -C dpdk defconfig T=x86_64-native-linuxapp-gcc
-	$(MAKE) -C dpdk EXTRA_CFLAGS="-fPIC $(CXXFLAGS)" -j
+	$(MAKE) -C dpdk EXTRA_CFLAGS="$(CXXFLAGS)" -j
 
 .PHONY: vcl
 vcl:

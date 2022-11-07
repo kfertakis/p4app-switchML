@@ -85,15 +85,15 @@ class SwitchML(object):
         self.multicast_groups = {self.all_ports_mgid: {}}
 
         # front port to dev port mapping
-        self.portMaps = dict({15: 30, 16: 31, 17:44, 18:45, 19:46, 20:47, 21:60, 22:61, 23:62, 24:63})
+        self.portMaps = dict({12:15, 14:29, 17:44, 18:45, 19:46, 20:47, 21:60, 22:61, 23:62, 24:63})
 
         # server node map
         self.nodeMap = dict({
-            0: nodeInfo(0, 15, "B8:CE:F6:D0:08:84", "quokka1.0"),
-            1: nodeInfo(1, 18, "0C:42:A1:81:1B:43", "quokka3.1"),
+            0: nodeInfo(0, 12, "EC:F4:BB:D6:10:02", "koala6"),
+            1: nodeInfo(1, 14, "24:6E:96:14:0F:82", "koala11"),
             2: nodeInfo(2, 22, "B8:CE:F6:D0:08:85", "quokka1.1"),
             3: nodeInfo(3, 20, "0C:42:A1:81:1B:BB", "quokka2.1"),
-            4: nodeInfo(4, 16, "0C:42:A1:81:1B:BA", "quokka2.0"),
+            4: nodeInfo(4, 18, "0C:42:A1:81:1B:43", "quokka3.1"),
             5: nodeInfo(5, 24, "0C:42:A1:81:1B:4B", "quokka4.1"),
         })
 
@@ -114,7 +114,7 @@ class SwitchML(object):
               incPlacement,
               folded_pipe=False):
 
-         # INCAS custom implementation
+        # INCAS custom implementation
         # success, params, placements = self.load_placements_file(placements_file)
         # if not success:
         #     self.critical_error(params)
@@ -528,7 +528,7 @@ class SwitchML(object):
         # ]
 
         rids_and_ports = [
-            (self.all_ports_initial_rid + dp, dp) for dp in [self.portMaps[15], self.portMaps[16], self.portMaps[18], self.portMaps[20], self.portMaps[22], self.portMaps[24]]
+            (self.all_ports_initial_rid + dp, dp) for dp in [self.portMaps[12], self.portMaps[14], self.portMaps[18], self.portMaps[20], self.portMaps[22], self.portMaps[24]]
         ]
         success, error_msg = self.pre.add_multicast_nodes(
             self.all_ports_mgid, rids_and_ports)
@@ -821,7 +821,7 @@ if __name__ == '__main__':
         '--inc-placement',
         type=int,
         default=7,
-        help='INC placement. range[7,8]')
+        help='INC placement. range[6,8]')
     
     argparser.add_argument(
         '--bfrt-ip',

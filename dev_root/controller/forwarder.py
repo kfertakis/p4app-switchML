@@ -90,10 +90,10 @@ class Forwarder(Control):
         # Add broadcast entry
         if incPlacement == 6:
             #left aggr
-            port_list = [15, 17, 18, 22]
+            port_list = [12, 14, 17, 22]
         elif incPlacement == 7:
             #right aggr
-            port_list = [16, 20, 23, 24]
+            port_list = [18, 20, 23, 24]
         elif incPlacement == 8:
             #top aggr
             port_list = [19, 21]
@@ -240,7 +240,7 @@ class Forwarder(Control):
     
     def add_process_type_meta_per_port(self, incPlacement):
 
-        for port in range(29,64):
+        for port in range(15,64):
             self.port_meta_table.entry_add(
                 self.target,
                 [self.port_meta_table.make_key([self.gc.KeyTuple('ig_intr_md.ingress_port', port)])],
@@ -250,13 +250,13 @@ class Forwarder(Control):
         port_list = []
         if incPlacement == 6:
             #left aggr
-            port_list = [19, 21, 23, 24, 16, 20]
+            port_list = [19, 21, 23, 24, 18, 20]
         elif incPlacement == 7:
             #right aggr
-            port_list = [17, 18, 19, 21, 22, 15]
+            port_list = [17, 12, 19, 21, 22, 14]
         elif incPlacement == 8:
             #top aggr
-            port_list = [15, 16, 17, 18, 20, 22, 23, 24]
+            port_list = [12, 14, 17, 18, 20, 22, 23, 24]
         else: 
             return False
         

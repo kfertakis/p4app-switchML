@@ -87,16 +87,32 @@ class Forwarder(Control):
 
         port_list = []
 
+        # # Add broadcast entry
+        # if incPlacement == 6:
+        #     #left aggr
+        #     port_list = [12, 14, 17, 22]
+        # elif incPlacement == 7:
+        #     #right aggr
+        #     port_list = [18, 20, 23, 24]
+        # elif incPlacement == 8:
+        #     #top aggr
+        #     port_list = [19, 21]
+        # else:
+        #     return False
+
         # Add broadcast entry
-        if incPlacement == 6:
+        if incPlacement == 9:
             #left aggr
-            port_list = [12, 14, 17, 22]
-        elif incPlacement == 7:
+            port_list = [9, 10, 11, 7]
+        elif incPlacement == 10:
+            #middle aggr
+            port_list = [12, 14, 22, 17]
+        elif incPlacement == 11:
             #right aggr
             port_list = [18, 20, 23, 24]
-        elif incPlacement == 8:
+        elif incPlacement == 12:
             #top aggr
-            port_list = [19, 21]
+            port_list = [8, 19, 21]
         else:
             return False
         
@@ -240,7 +256,7 @@ class Forwarder(Control):
     
     def add_process_type_meta_per_port(self, incPlacement):
 
-        for port in range(15,64):
+        for port in range(6,64):
             self.port_meta_table.entry_add(
                 self.target,
                 [self.port_meta_table.make_key([self.gc.KeyTuple('ig_intr_md.ingress_port', port)])],
@@ -248,17 +264,32 @@ class Forwarder(Control):
             )
         
         port_list = []
-        if incPlacement == 6:
+        if incPlacement == 9:
             #left aggr
-            port_list = [19, 21, 23, 24, 18, 20]
+            port_list = [8,12,14,22,17,19,21,23,24,18,20]
+        elif incPlacement == 10:
+            #middle aggr
+            port_list = [7,8,9,10,11,19,20,21,23,24,18]
         elif incPlacement == 7:
             #right aggr
-            port_list = [17, 12, 19, 21, 22, 14]
+            port_list = [17,12,19,21,22,14,7,8,9,10,11]
         elif incPlacement == 8:
             #top aggr
-            port_list = [12, 14, 17, 18, 20, 22, 23, 24]
+            port_list = [7,9,10,11,12,14,17,18,20,22,23,24]
         else: 
             return False
+        
+        # if incPlacement == 6:
+        #     #left aggr
+        #     port_list = [19, 21, 23, 24, 18, 20]
+        # elif incPlacement == 7:
+        #     #right aggr
+        #     port_list = [17, 12, 19, 21, 22, 14]
+        # elif incPlacement == 8:
+        #     #top aggr
+        #     port_list = [12, 14, 17, 18, 20, 22, 23, 24]
+        # else: 
+        #     return False
         
         for fp_port in port_list:
             self.port_meta_table.entry_add(

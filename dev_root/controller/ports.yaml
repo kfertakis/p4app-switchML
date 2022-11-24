@@ -1,6 +1,11 @@
 ports:
-    12/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "ec:f4:bb:d6:10:02"} #koalla06
-    14/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "24:6e:96:14:0f:82"} #koalla11
+    7/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: ""} #loopback
+    8/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: ""} #loopback
+    # 9/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "90:e2:ba:f7:34:b5"} #maru12
+    # 10/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "90:e2:ba:f7:33:49"} #maru11
+    # 11/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "86:0c:39:2a:87:31"} #maru10
+    # 12/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "ec:f4:bb:d6:10:02"} #koalla06
+    # 14/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "24:6e:96:14:0f:82"} #koalla11
     # 15/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "b8:ce:f6:d0:08:84"} #quokka1.0
     # 16/0 : {speed: "25G", fec: "rs", autoneg: "disable", mac: "0c:42:a1:81:1b:ba"} #quokka2.0
     17/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: ""} #ex. loopback
@@ -11,6 +16,14 @@ ports:
     22/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "b8:ce:f6:d0:08:85"} #quokka1.1
     23/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: ""} #ex. loopback
     24/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "0c:42:a1:81:1b:4b"} #quokka4.1
+
+    # 52/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "24:8a:07:a5:ab:60"} #kea06
+    55/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "24:8a:07:a5:aa:fc"} #kea07
+    54/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "24:8a:07:a5:af:80"} #kea08
+    56/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "24:8a:07:a5:ab:50"} #kea05
+    53/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "24:8a:07:a5:ab:4c"} #kea04
+    # 51/0 : {speed: "10G", fec: "none", autoneg: "disable", mac: "24:8a:07:a5:ae:f0"} #kea03
+
 
     # port 12 -> d_p 15
     # port 14 -> d_p 29
@@ -29,6 +42,11 @@ ports:
     # port 38 -> d_p 137
     # port 42 -> d_p 129
     # port 46 -> d_p 133
+
+    # port 55 -> d_p 8
+    # port 54 -> d_p 48
+    # port 56 -> d_p 16
+    # port 53 -> d_p 32
 
     # so we would like 45, 63 to be redirected 145 and 145 to be redirected to 45,63 egress
 

@@ -84,8 +84,11 @@ class SwitchML(object):
         # Multicast group ID -> replication ID (= node ID) -> port
         self.multicast_groups = {self.all_ports_mgid: {}}
 
+        # places that require change every time we change topology
+        # portMaps, nodeMap, Forwarder functions, load_ports_file, set_custom_forward_rules
+
         # front port to dev port mapping
-        self.portMaps = dict({7:6, 8:7, 9:12, 10:13, 11:14, 12:15, 14:29, 17:44, 18:45, 19:46, 20:47, 21:60, 22:61, 23:62, 24:63, 53:32, 54:48, 55:8, 56:16})
+        self.portMaps = dict({7:6, 8:7, 9:12, 10:13, 11:14, 12:15, 14:29, 15:30, 16:31, 17:44, 18:45, 19:46, 20:47, 21:60, 22:61, 23:62, 24:63, 53:32, 54:48, 55:8, 56:16})
 
         # server node map
         # self.nodeMap = dict({
@@ -844,9 +847,11 @@ class SwitchML(object):
         # rids_and_ports = [
         #     (self.all_ports_initial_rid + dp, dp) for dp in fib.keys()
         # ]
-
+        # ports_list = [self.portMaps[9],self.portMaps[10], self.portMaps[11], self.portMaps[12], self.portMaps[14], self.portMaps[18], self.portMaps[20], self.portMaps[22], self.portMaps[24]]
+        ports_list = [self.portMaps[pp.port] for pp in self.nodeMap.values()]
+        print(ports_list)
         rids_and_ports = [
-            (self.all_ports_initial_rid + dp, dp) for dp in [self.portMaps[9],self.portMaps[10], self.portMaps[11], self.portMaps[12], self.portMaps[14], self.portMaps[18], self.portMaps[20], self.portMaps[22], self.portMaps[24]]
+            (self.all_ports_initial_rid + dp, dp) for dp in ports_list
         ]
         success, error_msg = self.pre.add_multicast_nodes(
             self.all_ports_mgid, rids_and_ports)
@@ -1139,7 +1144,7 @@ if __name__ == '__main__':
         '--inc-placement',
         type=int,
         default=7,
-        help='INC placement. range[6,8]')
+        help='INC placement.')
     
     argparser.add_argument(
         '--bfrt-ip',

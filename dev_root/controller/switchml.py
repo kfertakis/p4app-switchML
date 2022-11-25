@@ -310,113 +310,310 @@ class SwitchML(object):
     def set_custom_forward_rules(self, incPlacement):
         # add manual forwarding rules
 
-        if incPlacement == 9:
+        if incPlacement == 8:
             #left aggr
 
-            for nodeIdx in range(6,9):
+            for nodeIdx in range(6,8):
                 node = self.nodeMap[nodeIdx]
-                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[23])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[node.port])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[21])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[21])
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[21])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[23])
                 self.forwarder.add_entry(self.portMaps[7], node.mac)
     
-            self.forwarder.add_full_manual_forw_entry(self.portMaps[21], self.switch_mac, self.portMaps[8])
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[23], self.switch_mac, self.portMaps[8])
 
-            for nodeIdx in range(3,6):
+            for nodeIdx in range(4,6):
                 node = self.nodeMap[nodeIdx]
                 self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[19])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[19])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[19])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[19])
                 self.forwarder.add_entry(self.portMaps[7], node.mac)
 
             self.forwarder.add_full_manual_forw_entry(self.portMaps[19], self.switch_mac, self.portMaps[8])
 
-            for nodeIdx in range(0,3):
+            for nodeIdx in range(2,4):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[15])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[15], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[16])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[16])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[16])
+                self.forwarder.add_entry(self.portMaps[7], node.mac)
+
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[16], self.switch_mac, self.portMaps[8])
+
+            for nodeIdx in range(0,2):
                 node = self.nodeMap[nodeIdx]
                 self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[8])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[8])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[8])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[8])
 
-        elif incPlacement == 10:
-            #middle aggr
+        elif incPlacement == 9:
+            #middle left aggr
 
-            for nodeIdx in range(6,9):
+            for nodeIdx in range(6,8):
                 node = self.nodeMap[nodeIdx]
-                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[23])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[node.port])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[21])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[21])
-                self.forwarder.add_entry(self.portMaps[17], node.mac)
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[21])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[23])
+                self.forwarder.add_entry(self.portMaps[15], node.mac)
     
-            self.forwarder.add_full_manual_forw_entry(self.portMaps[21], self.switch_mac, self.portMaps[19])
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[23], self.switch_mac, self.portMaps[16])
 
-            for nodeIdx in range(3,6):
-                node = self.nodeMap[nodeIdx]
-                self.forwarder.add_entry(self.portMaps[node.port], node.mac)
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[19])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[19])
-
-            for nodeIdx in range(0,3):
-                node = self.nodeMap[nodeIdx]
-                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[7])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[7], node.mac, self.portMaps[node.port])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[8])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[8])
-                self.forwarder.add_entry(self.portMaps[17], node.mac)
-            
-            self.forwarder.add_full_manual_forw_entry(self.portMaps[8], self.switch_mac, self.portMaps[19])
-        
-        elif incPlacement == 11:
-            #right aggr
-
-            for nodeIdx in range(6,9):
-                node = self.nodeMap[nodeIdx]
-                self.forwarder.add_entry(self.portMaps[node.port], node.mac)
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[21])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[21])
-
-            for nodeIdx in range(3,6):
+            for nodeIdx in range(4,6):
                 node = self.nodeMap[nodeIdx]
                 self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[19])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[19])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[19])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[19])
-                self.forwarder.add_entry(self.portMaps[23], node.mac)
-            
-            self.forwarder.add_full_manual_forw_entry(self.portMaps[19], self.switch_mac, self.portMaps[21])
+                self.forwarder.add_entry(self.portMaps[15], node.mac)
+    
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[19], self.switch_mac, self.portMaps[16])
 
-            for nodeIdx in range(0,3):
+            for nodeIdx in range(2,4):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[16])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[16])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[16])
+
+            for nodeIdx in range(0,2):
                 node = self.nodeMap[nodeIdx]
                 self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[7])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[7], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[8])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[8])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[8])
-                self.forwarder.add_entry(self.portMaps[23], node.mac)
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[8])
+                self.forwarder.add_entry(self.portMaps[15], node.mac)
             
-            self.forwarder.add_full_manual_forw_entry(self.portMaps[8], self.switch_mac, self.portMaps[21])
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[8], self.switch_mac, self.portMaps[16])
+        
+        elif incPlacement == 10:
+            #middle right aggr
 
+            for nodeIdx in range(6,8):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[21])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[23])
+                self.forwarder.add_entry(self.portMaps[17], node.mac)
+    
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[23], self.switch_mac, self.portMaps[19])
+
+            for nodeIdx in range(4,6):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[19])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[19])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[19])
+
+            for nodeIdx in range(2,4):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[15])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[15], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[16])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[16])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[16])
+                self.forwarder.add_entry(self.portMaps[17], node.mac)
+            
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[16], self.switch_mac, self.portMaps[19])
+
+            for nodeIdx in range(0,2):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[7])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[7], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[8])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[8])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[8])
+                self.forwarder.add_entry(self.portMaps[17], node.mac)
+            
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[8], self.switch_mac, self.portMaps[19])
+        elif incPlacement == 11:
+            #right aggr
+
+            for nodeIdx in range(6,8):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[23])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[23])
+
+            for nodeIdx in range(4,6):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[19])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[19])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[19])
+                self.forwarder.add_entry(self.portMaps[21], node.mac)
+    
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[19], self.switch_mac, self.portMaps[23])
+
+            for nodeIdx in range(2,4):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[15])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[15], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[16])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[16])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[16])
+                self.forwarder.add_entry(self.portMaps[21], node.mac)
+            
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[16], self.switch_mac, self.portMaps[23])
+
+            for nodeIdx in range(0,2):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[7])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[7], node.mac, self.portMaps[node.port])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[16], node.mac, self.portMaps[8])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[8])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[8])
+                self.forwarder.add_entry(self.portMaps[21], node.mac)
+            
+            self.forwarder.add_full_manual_forw_entry(self.portMaps[8], self.switch_mac, self.portMaps[23])
         elif incPlacement == 12:
             #top aggr
 
-            for nodeIdx in range(6,9):
+            for nodeIdx in range(6,8):
                 node = self.nodeMap[nodeIdx]
-                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[23])
-                self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[node.port])
-                self.forwarder.add_entry(self.portMaps[21], node.mac)
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[21])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[node.port])
+                self.forwarder.add_entry(self.portMaps[23], node.mac)
 
-            for nodeIdx in range(3,6):
+            for nodeIdx in range(4,6):
                 node = self.nodeMap[nodeIdx]
                 self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
                 self.forwarder.add_entry(self.portMaps[19], node.mac)
+            
+            for nodeIdx in range(2,4):
+                node = self.nodeMap[nodeIdx]
+                self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[15])
+                self.forwarder.add_full_manual_forw_entry(self.portMaps[15], node.mac, self.portMaps[node.port])
+                self.forwarder.add_entry(self.portMaps[16], node.mac)
 
-            for nodeIdx in range(0,3):
+            for nodeIdx in range(0,2):
                 node = self.nodeMap[nodeIdx]
                 self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[7])
                 self.forwarder.add_full_manual_forw_entry(self.portMaps[7], node.mac, self.portMaps[node.port])
                 self.forwarder.add_entry(self.portMaps[8], node.mac)
+
+        # if incPlacement == 9:
+        #     #left aggr
+
+        #     for nodeIdx in range(6,9):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[23])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[21])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[21])
+        #         self.forwarder.add_entry(self.portMaps[7], node.mac)
+    
+        #     self.forwarder.add_full_manual_forw_entry(self.portMaps[21], self.switch_mac, self.portMaps[8])
+
+        #     for nodeIdx in range(3,6):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[19])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[19])
+        #         self.forwarder.add_entry(self.portMaps[7], node.mac)
+
+        #     self.forwarder.add_full_manual_forw_entry(self.portMaps[19], self.switch_mac, self.portMaps[8])
+
+        #     for nodeIdx in range(0,3):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[8])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[8])
+
+        # elif incPlacement == 10:
+        #     #middle aggr
+
+        #     for nodeIdx in range(6,9):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[23])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[21])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[21])
+        #         self.forwarder.add_entry(self.portMaps[17], node.mac)
+    
+        #     self.forwarder.add_full_manual_forw_entry(self.portMaps[21], self.switch_mac, self.portMaps[19])
+
+        #     for nodeIdx in range(3,6):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[19])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[19])
+
+        #     for nodeIdx in range(0,3):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[7])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[7], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[8])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[8])
+        #         self.forwarder.add_entry(self.portMaps[17], node.mac)
+            
+        #     self.forwarder.add_full_manual_forw_entry(self.portMaps[8], self.switch_mac, self.portMaps[19])
+        
+        # elif incPlacement == 11:
+        #     #right aggr
+
+        #     for nodeIdx in range(6,9):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_entry(self.portMaps[node.port], node.mac)
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[21])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[21])
+
+        #     for nodeIdx in range(3,6):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[8], node.mac, self.portMaps[19])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[19])
+        #         self.forwarder.add_entry(self.portMaps[23], node.mac)
+            
+        #     self.forwarder.add_full_manual_forw_entry(self.portMaps[19], self.switch_mac, self.portMaps[21])
+
+        #     for nodeIdx in range(0,3):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[7])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[7], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[19], node.mac, self.portMaps[8])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[21], node.mac, self.portMaps[8])
+        #         self.forwarder.add_entry(self.portMaps[23], node.mac)
+            
+        #     self.forwarder.add_full_manual_forw_entry(self.portMaps[8], self.switch_mac, self.portMaps[21])
+
+        # elif incPlacement == 12:
+        #     #top aggr
+
+        #     for nodeIdx in range(6,9):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[23])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[23], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_entry(self.portMaps[21], node.mac)
+
+        #     for nodeIdx in range(3,6):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[17])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[17], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_entry(self.portMaps[19], node.mac)
+
+        #     for nodeIdx in range(0,3):
+        #         node = self.nodeMap[nodeIdx]
+        #         self.forwarder.add_manual_forw_entry(self.portMaps[node.port],self.portMaps[7])
+        #         self.forwarder.add_full_manual_forw_entry(self.portMaps[7], node.mac, self.portMaps[node.port])
+        #         self.forwarder.add_entry(self.portMaps[8], node.mac)
 
         # if incPlacement == 6:
         #     #left aggr

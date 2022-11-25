@@ -100,19 +100,38 @@ class Forwarder(Control):
         # else:
         #     return False
 
+        # # Add broadcast entry
+        # if incPlacement == 9:
+        #     #left aggr
+        #     port_list = [9, 10, 11, 7]
+        # elif incPlacement == 10:
+        #     #middle aggr
+        #     port_list = [12, 14, 22, 17]
+        # elif incPlacement == 11:
+        #     #right aggr
+        #     port_list = [18, 20, 23, 24]
+        # elif incPlacement == 12:
+        #     #top aggr
+        #     port_list = [8, 19, 21]
+        # else:
+        #     return False
+
         # Add broadcast entry
-        if incPlacement == 9:
+        if incPlacement == 8:
             #left aggr
-            port_list = [9, 10, 11, 7]
+            port_list = [20, 22, 7]
+        elif incPlacement == 9:
+            #middle left aggr
+            port_list = [15, 18, 24]
         elif incPlacement == 10:
-            #middle aggr
-            port_list = [12, 14, 22, 17]
+            #middle right aggr
+            port_list = [17, 53, 56]
         elif incPlacement == 11:
             #right aggr
-            port_list = [18, 20, 23, 24]
+            port_list = [21, 54, 55]
         elif incPlacement == 12:
             #top aggr
-            port_list = [8, 19, 21]
+            port_list = [8, 16, 19, 23]
         else:
             return False
         
@@ -264,20 +283,38 @@ class Forwarder(Control):
             )
         
         port_list = []
-        if incPlacement == 9:
+        if incPlacement == 8:
             #left aggr
-            port_list = [8,12,14,22,17,19,21,23,24,18,20]
+            port_list = [8,16,15,18,24,19,17,53,56,23,21,55,54]
+        elif incPlacement == 9:
+            #middle left aggr
+            port_list = [20,22,7,8,16,19,17,53,56,23,21,55,54]
         elif incPlacement == 10:
-            #middle aggr
-            port_list = [7,8,9,10,11,19,20,21,23,24,18]
-        elif incPlacement == 7:
+            #middle right aggr
+            port_list = [20,22,7,8,16,15,18,24,19,23,21,55,54]
+        elif incPlacement == 11:
             #right aggr
-            port_list = [17,12,19,21,22,14,7,8,9,10,11]
-        elif incPlacement == 8:
+            port_list = [20,22,7,8,16,15,18,24,19,17,53,56,23]
+        elif incPlacement == 12:
             #top aggr
-            port_list = [7,9,10,11,12,14,17,18,20,22,23,24]
+            port_list = [22,20,7,18,24,15,53,56,17,55,54,21]
         else: 
             return False
+        
+        # if incPlacement == 9:
+        #     #left aggr
+        #     port_list = [8,12,14,22,17,19,21,23,24,18,20]
+        # elif incPlacement == 10:
+        #     #middle aggr
+        #     port_list = [7,8,9,10,11,19,20,21,23,24,18]
+        # elif incPlacement == 7:
+        #     #right aggr
+        #     port_list = [17,12,19,21,22,14,7,8,9,10,11]
+        # elif incPlacement == 8:
+        #     #top aggr
+        #     port_list = [7,9,10,11,12,14,17,18,20,22,23,24]
+        # else: 
+        #     return False
         
         # if incPlacement == 6:
         #     #left aggr
